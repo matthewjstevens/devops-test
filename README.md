@@ -8,3 +8,9 @@ Built using Golang 1.23. To run locally:
 go build
 MESSAGE="Hello World" ./devopsTest
 ```
+
+To run the tests:
+
+```
+go test
+```
