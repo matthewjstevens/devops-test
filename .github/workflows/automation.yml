@@ -1,0 +1,71 @@
+name: automation
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+
+      # Checkout repo
+      - uses: actions/checkout@v3
+
+      # Create sha for unique handler
+
+      # Create sha for unique handler
+
+      # Create sha for unique handler
+      - name: Commit SHA slug
+        id: slug
+        run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+
+      # Run test suite
+      - name: run tests
+        run: |
+          go test
+      #  working-directory: path here
+
+      # Build docker image
+      - name: build docker image
+        run: |
+          'docker build -t devops-test:${{ steps.slug.outputs.sha8 }} -f Dockerfile'
+
+      # Login handler
+      - name: log into docker container reg
+        run: |
+          'docker login ghcr.io -u ${{ secrets.docker_login }} --password ${{ secrets.docker_password }}'
+
+      # Push to container
+      - name: push container to container registry
+        run: |
+          'docker push ghcr.io/matthewjstevens/${{ steps.slug.outputs.sha8 }}:latest'
+
+      #
+      - uses: cschleiden/replace-tokens@v1
+        with:
+          tokenPrefix: _ # not required
+          tokenSuffix: _ # not required
+          files: '["kubernetes/.yaml"]'
+        env:
+          DOCKER_REPOSITORY: matthewjstevens
+          IMAGE_TAG: ${{ steps.slug.outputs.sha8 }}
+          IMAGE_NAME: devops-test
+
+      - name: Deploy kube file
+        run: |
+          'kubectl apply -f kubernetes.yaml'
+
+      - name: "validate deployment status"
+        run: |
+          kubectl get deploy
+          kubectl get pods
+          kubectl get svc
