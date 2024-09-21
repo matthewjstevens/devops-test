@@ -2,7 +2,7 @@ name: automation
 
 on:
   push:
-    branches: [main]
+    branches: ["main","dockerfile.main"]
 
 jobs:
 
@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v5
         with:
-          go-version: '^1.13.1' #The Go version to download (if necessary) and use.
+          go-version: '^1.23.1' #The Go version to download (if necessary) and use.
       - run: go version
      
       - name: Commit SHA slug
@@ -59,12 +59,9 @@ jobs:
           IMAGE_TAG: ${{ steps.slug.outputs.sha8 }}
           IMAGE_NAME: devops-test
 
-      - name: Deploy kube file
-        run: |
-          'kubectl apply -f kubernetes.yaml'
-
-      - name: "validate deployment status"
-        run: |
-          kubectl get deploy
-          kubectl get pods
-          kubectl get svc
+      - name: deploy to cluster
+        uses: steebchen/kubectl@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: apply -n poc-namespace -f manifests/
