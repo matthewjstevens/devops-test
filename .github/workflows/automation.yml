@@ -44,7 +44,8 @@ jobs:
       # Build docker image
       - name: build docker image
         run: |
-          'docker build -t devops-test:${{ steps.slug.outputs.sha8 }} -f ${{ github.workspace }}/Dockerfile'
+          'docker build -t devops-test:${{ steps.slug.outputs.sha8 }} -f Dockerfile'
+        working-directory: ${{ github.workspace }}
 
       # Login handler
       - name: log into docker container reg
