@@ -44,7 +44,7 @@ jobs:
       # Build docker image
       - name: build docker image
         run: |
-          'docker build -t devops-test:${{ steps.slug.outputs.sha8 }} -f Dockerfile .'
+          'docker build -t matthewjstevens/:${{ steps.slug.outputs.sha8 }} .'
         working-directory: ${{ github.workspace }}
 
       # Login handler
