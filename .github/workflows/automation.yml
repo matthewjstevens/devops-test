@@ -53,7 +53,8 @@ jobs:
       # Push to container
       - name: push container to container registry
         run: docker push ghcr.io/matthewjstevens/${{ steps.slug.outputs.sha8 }}:latest
-        with: ${{ secrets.GITHUB_TOKEN }} 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
       #
       - uses: cschleiden/replace-tokens@v1
