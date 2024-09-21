@@ -61,9 +61,8 @@ jobs:
           tokenSuffix: _ # not required
           files: '["kubernetes/.yaml"]'
         env:
-          DOCKER_REPOSITORY: matthewjstevens
-          IMAGE_TAG: ${{ steps.slug.outputs.sha8 }}
-          IMAGE_NAME: devops-test
+          DOCKER_REPOSITORY: ghcr.io/matthewjstevens/${{ steps.slug.outputs.sha8 }}
+          IMAGE_TAG: latest 
 
       - name: deploy to cluster
         uses: steebchen/kubectl@master
