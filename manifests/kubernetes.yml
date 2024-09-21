@@ -14,9 +14,11 @@ spec:
     spec:
       containers:
       - name: devops-test
-        image: __DOCKER_REPOSITORY__:__IMAGE_TAG__
+        image: ghcr.io/matthewjstevens/f40dbcee:latest
         ports:
         - containerPort: 5000
+      imagePullSecrets:
+      - name: dockerconfigjson-github-com
 ---
 kind: Service
 apiVersion: v1
@@ -24,7 +26,7 @@ metadata:
   name: devops-test-service
 spec:
   selector:
-    app: devops-test
+    app: devopstest
   ports:
   - protocol: TCP
     port: 80
