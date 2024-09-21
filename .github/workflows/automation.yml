@@ -69,4 +69,4 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG }}
         with:
-          args: apply -n poc-namespace -f manifests/
+          args: kubectl -f manifests/kubernetes.yaml
