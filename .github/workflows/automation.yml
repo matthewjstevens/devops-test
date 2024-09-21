@@ -48,13 +48,11 @@ jobs:
 
       # Login handler
       - name: log into docker container reg
-        run: |
-          'docker login ghcr.io -u ${{ secrets.docker_login }} --password ${{ secrets.docker_password }}'
+        run: docker login ghcr.io -u ${{ secrets.docker_login }} --password ${{ secrets.docker_password }}
 
       # Push to container
       - name: push container to container registry
-        run: |
-          'docker push ghcr.io/matthewjstevens/${{ steps.slug.outputs.sha8 }}:latest'
+        run: docker push ghcr.io/matthewjstevens/${{ steps.slug.outputs.sha8 }}:latest
 
       #
       - uses: cschleiden/replace-tokens@v1
