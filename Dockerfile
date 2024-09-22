@@ -1,25 +1,32 @@
-# Specifies a parent image
-FROM golang:1.19.2-bullseye
- 
-# Creates an app directory to hold your app’s source code
+# Step 1: Build the Go application
+FROM golang:1.20-alpine AS builder
+
+# Set the Current Working Directory inside the container
 WORKDIR /devops-test
- 
-# Copies everything from your root directory into /app
-COPY . .
- 
-# Installs Go dependencies
+
+# Copy go mod and sum files
+COPY go.mod go.sum ./
+
+# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
 RUN go mod download
- 
-# Builds your app with optional configuration
-RUN go build -o /godocker
- 
-# Tells Docker which network port your container listens on
+
+# Copy the source code into the container
+COPY . .
+
+# Build the Go app
+RUN go build -o main .
+
+# Step 2: Run the Go application
+FROM alpine:latest
+
+# Set the Current Working Directory inside the container
+WORKDIR /app
+
+# Copy the Pre-built binary file from the previous stage
+COPY --from=builder /app/main .
+
+# Expose port 5000 to the outside world
 EXPOSE 5000
 
-# Installs Kubectl
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-RUN chmod +x ./kubectl
-RUN mv ./kubectl /usr/local/bin
- 
-# Specifies the executable command that runs when the container starts
-CMD [ “/godocker” ]
+# Command to run the executable
+CMD ["./main"]
