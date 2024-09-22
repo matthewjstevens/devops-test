@@ -8,7 +8,7 @@ jobs:
 
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     defaults:
       run:
@@ -68,4 +68,4 @@ jobs:
 
       # Deploys to cluster  
       - name: Deploy to K8s
-        run: kubectl apply -f manifests/kubernetes.yml -s https://10.1.221.52:6443 --username ${{ secrets.KUBE_USER }} --password ${{ secrets.KUBE_PASSWORD }}
+        run: kubectl apply -f manifests/kubernetes.yml
