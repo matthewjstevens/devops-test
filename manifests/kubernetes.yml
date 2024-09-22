@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: devops-test
-        image: ghcr.io/matthewjstevens/f40dbcee:latest
+        image: ghcr.io/matthewjstevens/9d6b4a1e:latest
         ports:
         - containerPort: 5000
         resources:
