@@ -20,10 +20,10 @@ RUN go build -o main .
 FROM alpine:latest
 
 # Set the Current Working Directory inside the container
-WORKDIR /app
+WORKDIR /devops-test
 
 # Copy the Pre-built binary file from the previous stage
-COPY --from=builder /app/main .
+COPY --from=builder /devops-test/main .
 
 # Expose port 5000 to the outside world
 EXPOSE 5000
