@@ -1,5 +1,5 @@
 # Step 1: Build the Go application
-FROM golang:1.20-alpine AS builder
+FROM golang:1.23.1-alpine AS builder
 
 # Set the Current Working Directory inside the container
 WORKDIR /devops-test
