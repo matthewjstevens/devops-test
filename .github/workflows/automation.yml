@@ -34,11 +34,6 @@ jobs:
       - name: Run tests
         run: go test -v ./...
         
-      # Debug step to check files
-      - name: Debug workspace
-        run: ls -al
-        working-directory: ${{ github.workspace }}
-
       # Build Docker image with GitHub Packages registry tag
       - name: Build Docker image
         run: docker build . -t ghcr.io/matthewjstevens/devops-test:${{ steps.slug.outputs.sha8 }}-latest
@@ -62,22 +57,11 @@ jobs:
           echo "DOCKER_REPOSITORY=ghcr.io/matthewjstevens/devops-test" >> $GITHUB_ENV
           echo "IMAGE_TAG=${{ steps.slug.outputs.sha8 }}-latest" >> $GITHUB_ENV
       
-      # Debug environment variables
-      - name: Print environment variables
-        run: |
-          echo "DOCKER_REPOSITORY=$DOCKER_REPOSITORY"
-          echo "IMAGE_TAG=$IMAGE_TAG"
-      
       # Replacing tokens with sed  
       - name: Replace tokens using sed
         run: |
           sed -i 's|_DOCKER_REPOSITORY_|'"$DOCKER_REPOSITORY"'|g' manifests/kubernetes.yml
           sed -i 's|_IMAGE_TAG_|'"$IMAGE_TAG"'|g' manifests/kubernetes.yml
-
-      # Debugging kubernetes file
-      - name: Debug file
-        run: cat manifests/kubernetes.yml
-        working-directory: ${{ github.workspace }}
 
       # Apply Kubernetes manifests to deploy the image
       - uses: actions-hub/kubectl@master
