@@ -61,7 +61,7 @@ jobs:
         with:
           tokenPrefix: '_'
           tokenSuffix: '_'
-          files: '["manifests/kubernetes.yml"]'
+          files: manifests/kubernetes.yml
         env:
           DOCKER_REPOSITORY: ghcr.io/matthewjstevens/devops-test
           IMAGE_TAG: ${{ steps.slug.outputs.sha8 }}-latest
