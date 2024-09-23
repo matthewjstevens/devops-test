@@ -2,12 +2,10 @@ name: automation
 
 on:
   push:
-    branches: ["main","dockerfile.main"]
+    branches: ["main", "dockerfile.main"]
 
 jobs:
-
   build:
-
     runs-on: self-hosted
 
     defaults:
@@ -15,60 +13,63 @@ jobs:
         shell: bash
 
     steps:
-
       # Checkout repo
       - uses: actions/checkout@v4
         with:
           repository: matthewjstevens/devops-test
           ref: dockerfile.main
 
+      # Set up Go environment
       - uses: actions/setup-go@v5
         with:
-          go-version: '^1.23.1' #The Go version to download (if necessary) and use.
+          go-version: '^1.23.1'
       - run: go version
-     
+
+      # Commit SHA slug (short SHA)
       - name: Commit SHA slug
         id: slug
         run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
 
-      # Run test suite
-      - name: run tests
-        run: |
-          go test
-      #  working-directory: path here
-      - name: debug
-        run: |
-          ls -al
+      # Run Go tests
+      - name: Run tests
+        run: go test -v ./...
+        
+      # Debug step to check files
+      - name: Debug workspace
+        run: ls -al
         working-directory: ${{ github.workspace }}
 
-      # Build docker image
-      - name: build docker image
-        run: docker build . -t ghcr.io/matthewjstevens/${{ steps.slug.outputs.sha8 }}:latest
+      # Build Docker image with GitHub Packages registry tag
+      - name: Build Docker image
+        run: docker build . -t ghcr.io/matthewjstevens/devops-test:${{ steps.slug.outputs.sha8 }}-latest
         working-directory: ${{ github.workspace }}
 
-      # Login handler
-      - name: log into docker container reg
-        run: docker login ghcr.io -u ${{ secrets.docker_login }} --password ${{ secrets.docker_password }}
+      # Log into GitHub Container Registry (ghcr.io)
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Push to container
-      - name: push container to container registry
-        run: docker push ghcr.io/matthewjstevens/${{ steps.slug.outputs.sha8 }}:latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+      # Push the Docker image to GitHub Packages
+      - name: Push Docker image
+        run: docker push ghcr.io/matthewjstevens/devops-test:${{ steps.slug.outputs.sha8 }}-latest
 
-      #
+      # Replace tokens in Kubernetes YAML manifests (for image tagging)
       - uses: cschleiden/replace-tokens@v1
         with:
-          tokenPrefix: _ # not required
-          tokenSuffix: _ # not required
-          files: '["kubernetes/.yaml"]'
+          tokenPrefix: '_'
+          tokenSuffix: '_'
+          files: '["manifests/kubernetes.yml"]'
         env:
-          DOCKER_REPOSITORY: ghcr.io/matthewjstevens/${{ steps.slug.outputs.sha8 }}
-          IMAGE_TAG: latest
-      
-      # Connect to KUBECONFIG  
+          DOCKER_REPOSITORY: ghcr.io/matthewjstevens/devops-test
+          IMAGE_TAG: ${{ steps.slug.outputs.sha8 }}-latest
+
+      # Apply Kubernetes manifests to deploy the image
       - uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
           args: apply -f manifests/kubernetes.yml
+
