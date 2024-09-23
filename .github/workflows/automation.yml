@@ -2,7 +2,7 @@ name: automation
 
 on:
   push:
-    branches: ["main", "dockerfile.main"]
+    branches: [main]
 
 jobs:
   build:
