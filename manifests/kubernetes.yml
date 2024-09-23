@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: devops-test-deployment
+  name: devops-test
 spec:
   replicas: 1
   selector:
@@ -30,12 +30,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: devops-test-service
+  name: devops-test
 spec:
   selector:
     app: devops-test
   ports:
   - protocol: TCP
-    port: 5000
+    port: 80
     targetPort: 5000
-  type: LoadBalancer #NodePort
+  type: NodePort
