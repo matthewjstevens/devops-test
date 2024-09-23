@@ -55,7 +55,11 @@ jobs:
       # Push the Docker image to GitHub Packages
       - name: Push Docker image
         run: docker push ghcr.io/matthewjstevens/devops-test:${{ steps.slug.outputs.sha8 }}-latest
-
+      
+      # Debug environment variables
+      - name: Debubg environment variables
+        run: echo "DOCKER_REPOSITORY=${{ env.DOCKER_REPOSITORY }} IMAGE_TAG=${{ env.IMAGE_TAG }}"
+      
       # Replace tokens in Kubernetes YAML manifests (for image tagging)
       - uses: cschleiden/replace-tokens@v1
         with:
