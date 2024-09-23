@@ -16,17 +16,17 @@ spec:
       - name: devops-test
         image: _DOCKER_REPOSITORY_:_IMAGE_TAG_
         ports:
-      - containerPort: 5000
-      env:
-      - name: MESSAGE
-        value: "Hello World"
+        - containerPort: 5000
+        env:
+        - name: MESSAGE
+          value: "Hello World"
         resources:
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
+         limits:
+           memory: "512Mi"
+           cpu: "500m"
+         requests:
+           memory: "256Mi"
+           cpu: "250m"
 ---
 apiVersion: v1
 kind: Service
