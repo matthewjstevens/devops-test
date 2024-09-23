@@ -56,8 +56,14 @@ jobs:
       - name: Push Docker image
         run: docker push ghcr.io/matthewjstevens/devops-test:${{ steps.slug.outputs.sha8 }}-latest
       
+      # Set environment variables for token replacement
+      - name: Set environment variables
+        run: |
+          echo "DOCKER_REPOSITORY=ghcr.io/matthewjstevens/devops-test" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${{ steps.slug.outputs.sha8 }}-latest" >> $GITHUB_ENV
+      
       # Debug environment variables
-      - name: Debubg environment variables
+      - name: Debug environment variables
         run: echo "DOCKER_REPOSITORY=${{ env.DOCKER_REPOSITORY }} IMAGE_TAG=${{ env.IMAGE_TAG }}"
       
       # Replace tokens in Kubernetes YAML manifests (for image tagging)
@@ -66,9 +72,6 @@ jobs:
           tokenPrefix: '_'
           tokenSuffix: '_'
           files: manifests/kubernetes.yml
-        env:
-          DOCKER_REPOSITORY: ghcr.io/matthewjstevens/devops-test
-          IMAGE_TAG: ${{ steps.slug.outputs.sha8 }}-latest
 
       # Debugging kubernetes file
       - name: Debug file
