@@ -16,7 +16,10 @@ spec:
       - name: devops-test
         image: _DOCKER_REPOSITORY_:_IMAGE_TAG_
         ports:
-        - containerPort: 5000
+      - containerPort: 5000
+      env:
+      - name: MESSAGE
+        value: "Hello World"
         resources:
           limits:
             memory: "512Mi"
@@ -24,8 +27,6 @@ spec:
           requests:
             memory: "256Mi"
             cpu: "250m"
-      #imagePullSecrets:
-      #- name: dockerconfigjson-github-com
 ---
 apiVersion: v1
 kind: Service
