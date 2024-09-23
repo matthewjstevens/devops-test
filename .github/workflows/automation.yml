@@ -63,14 +63,16 @@ jobs:
           echo "IMAGE_TAG=${{ steps.slug.outputs.sha8 }}-latest" >> $GITHUB_ENV
       
       # Debug environment variables
-      - name: Debug environment variables
-        run: echo "DOCKER_REPOSITORY=${{ env.DOCKER_REPOSITORY }} IMAGE_TAG=${{ env.IMAGE_TAG }}"
+      - name: Print environment variables
+        run: |
+          echo "DOCKER_REPOSITORY=$DOCKER_REPOSITORY"
+          ehco "IMAGE_TAG=$IMAGE_TAG"
       
       # Replace tokens in Kubernetes YAML manifests (for image tagging)
       - uses: cschleiden/replace-tokens@v1
         with:
-          tokenPrefix: '_'
-          tokenSuffix: '_'
+          tokenPrefix: _
+          tokenSuffix: _
           files: manifests/kubernetes.yml
 
       # Debugging kubernetes file
