@@ -59,7 +59,7 @@ jobs:
       # Set environment variables for token replacement
       - name: Set environment variables
         run: |
-          echo "DOCKER_REPOSITORY=ghcr.io/matthewjstevens/devops-test:" >> $GITHUB_ENV
+          echo "DOCKER_REPOSITORY=ghcr.io/matthewjstevens/devops-test" >> $GITHUB_ENV
           echo "IMAGE_TAG=${{ steps.slug.outputs.sha8 }}-latest" >> $GITHUB_ENV
       
       # Debug environment variables
@@ -68,12 +68,11 @@ jobs:
           echo "DOCKER_REPOSITORY=$DOCKER_REPOSITORY"
           echo "IMAGE_TAG=$IMAGE_TAG"
       
-      # Replace tokens in Kubernetes YAML manifests (for image tagging)
-      - uses: cschleiden/replace-tokens@v1
-        with:
-          tokenPrefix: _
-          tokenSuffix: _
-          files: manifests/kubernetes.yml
+      # Replacing tokens with sed  
+      - name: Replace tokens using sed
+        run: |
+          sed -i 's|_DOCKER_REPOSITORY_|'"$DOCKER_REPOSITORY"'|g' manifests/kubernetes.yml
+          sed -i 's|_IMAGE_TAG_|'"$IMAGE_TAG"'|g' manifests/kubernetes.yml
 
       # Debugging kubernetes file
       - name: Debug file
