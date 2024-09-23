@@ -59,7 +59,7 @@ jobs:
       # Set environment variables for token replacement
       - name: Set environment variables
         run: |
-          echo "DOCKER_REPOSITORY=ghcr.io/matthewjstevens/devops-test" >> $GITHUB_ENV
+          echo "DOCKER_REPOSITORY=ghcr.io/matthewjstevens/devops-test:" >> $GITHUB_ENV
           echo "IMAGE_TAG=${{ steps.slug.outputs.sha8 }}-latest" >> $GITHUB_ENV
       
       # Debug environment variables
