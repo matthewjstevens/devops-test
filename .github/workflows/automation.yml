@@ -66,6 +66,11 @@ jobs:
           DOCKER_REPOSITORY: ghcr.io/matthewjstevens/devops-test
           IMAGE_TAG: ${{ steps.slug.outputs.sha8 }}-latest
 
+      # Debugging kubernetes file
+      - name: Debug file
+        run: cat manifests/kubernetes.yml
+        working-directory: ${{ github.workspace }}
+
       # Apply Kubernetes manifests to deploy the image
       - uses: actions-hub/kubectl@master
         env:
